@@ -30,7 +30,7 @@ void setup() {
   scale = 0.001 * 0.5 * SND_VEL;
 
 // initialize serial port
-  Serial.begin(19200);
+  Serial.begin(57600);
 
 // initialize last sampling time
   last_sampling_time = 0;
@@ -51,18 +51,18 @@ void loop() {
   Serial.print(",");
   Serial.println("Max:400");
 
-  long a = dist_raw - 100;
-  long b = dist_raw - 300;
-  long c = -1;
-  long val = a*b*c;
-  long valed = map(val, 0, 10000, 0, 255);
+  
+  int a = dist_raw - 100;
+  int b = dist_raw - 300;
+  int val = a*b;
+  int valed = map(val, 0, 10000, 0, 255);
   
 // turn on the LED if the distance is between dist_min and dist_max
   if(dist_raw < dist_min || dist_raw > dist_max) {
-    analogWrite(PIN_LED, valed);
+    analogWrite(PIN_LED, 255);
   }
   else {
-    analogWrite(PIN_LED, 0);
+    analogWrite(PIN_LED, valed);
   }
 
 
