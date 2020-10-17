@@ -11,7 +11,7 @@
 
 // global variables
 float timeout; // unit: us
-float dist_min, dist_max, dist_raw; // unit: mm
+float dist_min, dist_max, dist_raw, dist_prev; // unit: mm
 unsigned long last_sampling_time; // unit: ms
 float scale; // used for pulse duration to distance conversion
 
