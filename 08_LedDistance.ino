@@ -26,7 +26,7 @@ void setup() {
   dist_min = _DIST_MIN; 
   dist_max = _DIST_MAX;
   timeout = (INTERVAL / 4) * 1000.0; // 25ms / precalculate pulseIn() timeout value. (unit: us)
-  dist_raw = 0.0; // raw distance output from USS (unit: mm)
+  dist_raw = dist_prev = 0.0; // raw distance output from USS (unit: mm)
   scale = 0.001 * 0.5 * SND_VEL;
 
 // initialize serial port
@@ -78,7 +78,9 @@ float USS_measure(int TRIG, int ECHO)
   delayMicroseconds(10);
   digitalWrite(TRIG, LOW);
   reading = pulseIn(ECHO, HIGH, timeout) * scale; // unit: mm
-  if(reading < dist_min || reading > dist_max); // return same value when out of range.
+  if(reading < dist_min || reading > dist_max) reading = 0.0; // return same value when out of range.
+  if (reading == 0.0) reading = dist_prev;
+  else dist_prev = reading;
   return reading;
   // Pulse duration to distance conversion example (target distance = 17.3m)
   // - round trip distance: 34.6m
