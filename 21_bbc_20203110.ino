@@ -10,6 +10,7 @@
 #define _DIST_MIN 69 // minimum distance to be measured (unit: mm)
 #define _DIST_MAX 321 // maximum distance to be measured (unit: mm)
 
+float val, raw_val, prev_val, ema_val, a;
 float raw_dist;
 
 // servo한테 줄 duty값의 최대, 최소, 적용값
@@ -17,20 +18,17 @@ float raw_dist;
 #define _DUTY_NEU 1520 + (-1.5) * raw_dist//neutral position (90 degree)
 #define _DUTY_MAX 1950 // servo full counterclockwise position (180 degree)
 
-
-// unsigned long last_sampling_time; // unit: ms
 Servo myservo;
-
-float val, raw_val, prev_val, ema_val, a;
 
 void setup() {
 // initialize GPIO pins
   pinMode(PIN_LED,OUTPUT);
   digitalWrite(PIN_LED, 1);
-
+// servo 연결
   myservo.attach(PIN_SERVO); 
   myservo.writeMicroseconds(_DUTY_NEU);
-
+  
+// initialize
   raw_val = prev_val = 0.0;
   
 // initialize serial port
@@ -44,7 +42,7 @@ void setup() {
 float ir_distance(void){ // return value unit: mm
   float volt = float(analogRead(PIN_IR));
   raw_val = ((6762.0/(volt-9.0))-4.0) * 10.0;
-
+// ema 필터링
   a = 0.5;
   val = raw_val - 170.0;
   ema_val = a * raw_val + (1-a) * ema_val;
@@ -61,6 +59,7 @@ void loop() {
   Serial.println(raw_dist);
   delay(60);
 
+  // 범위 벗어난 값 처리
 if(raw_val < 69.0) {
      myservo.writeMicroseconds(_DUTY_MIN);
   }
